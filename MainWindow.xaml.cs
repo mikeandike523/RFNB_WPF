@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -26,17 +27,40 @@ namespace RFNB_UWP
     public partial class MainWindow : Window
     {
 
+        //Application Parameters
+        private readonly double _swipeDeltaX = 50.0;
+
         //Notebook Function
 
         Notebook notebook = new Notebook("Untitled");
 
 
-        //UI Function
+        //UI -- Window and Rendering
 
         public MainWindow()
         {
+
             InitializeComponent();
+
+            // --- Courtesy of Microsoft Documentation
+            // https://docs.microsoft.com/en-us/dotnet/api/system.windows.controls.inkcanvaseditingmode?view=windowsdesktop-6.0#system-windows-controls-inkcanvaseditingmode-ink
+            MainInkCanvas.EditingMode = InkCanvasEditingMode.Ink;
+            // ---
+
+            Render();
         }
+
+        private void Render() {
+
+            StrokeCollection? collection = notebook.LoadNotebookPageStrokes(null);
+            if (collection != null) { 
+                MainInkCanvas.Strokes = collection;
+            }
+            PageNumber.Text = (notebook.GetCurrentPageNumber()+1).ToString();
+        
+        }
+
+        //UI -- User Input
 
         private double initialX;
         private double initialY;
@@ -63,8 +87,30 @@ namespace RFNB_UWP
             finalY = e.GetTouchPoint(null).Position.Y;
 
             double deltaX = finalX - currentX;
+            if (deltaX < -_swipeDeltaX)
+            {
+                notebook.SwitchToNextPage();
+                Render();
+            }
+            else if (deltaX > -_swipeDeltaX)
+            {
+                notebook.SwitchToPreviousPage();
+                Render();
+            }
+            else { 
+            
+            }
 
+        }
 
+        private void MainInkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
+        {
+            notebook.WriteStrokesToNotebook(null, MainInkCanvas.Strokes);
+        }
+
+        private void MainInkCanvas_StrokeErased(object sender, RoutedEventArgs e)
+        {
+            notebook.WriteStrokesToNotebook(null, MainInkCanvas.Strokes);
         }
     }
 }

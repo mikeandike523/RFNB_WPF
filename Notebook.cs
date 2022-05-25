@@ -17,6 +17,12 @@ namespace RFNB_UWP
 
         private DictionaryWithExpiration<int, StrokeCollection> _pageData;
 
+        string _root; //Absolute path to notebook root
+
+        public int GetCurrentPageNumber() {
+            return _currentPage;
+        }
+
         public bool SwitchToPreviousPage() {
             _currentPage--;
             if (_currentPage < 0)
@@ -55,7 +61,7 @@ namespace RFNB_UWP
             {
                 pageNumber = _currentPage;
             }
-            string filepath = Utilities.GetFilePath(Utilities.JoinPaths(_name, _currentSection.ToString(), pageNumber.ToString()));
+            string filepath = Utilities.JoinPaths(_root, _currentSection.ToString(), pageNumber.ToString());
             if (File.Exists(filepath))
                 return Utilities.LoadStrokeCollectionFromFile(filepath);
             return null;
@@ -67,12 +73,12 @@ namespace RFNB_UWP
             {
                 pageNumber = _currentPage;
             }
-            string filepath = Utilities.GetFilePath(Utilities.JoinPaths(_name, _currentSection.ToString(), pageNumber.ToString()));
+            string filepath = Utilities.JoinPaths(_root, _currentSection.ToString(), pageNumber.ToString())+".isf";
             Utilities.SaveStrokeCollectionToFile(filepath,_pageData[pageNumber ?? _currentPage]);
         }
 
         public StrokeCollection StrokeFileLoader(int pageNumber) {
-            string filepath = Utilities.GetFilePath(Utilities.JoinPaths(_name, _currentSection.ToString(), pageNumber.ToString()));
+            string filepath = Utilities.GetFilePath(Utilities.JoinPaths(_name, _currentSection.ToString(), pageNumber.ToString()))+".isf";
             return Utilities.LoadStrokeCollectionFromFile(filepath);
         }
 
@@ -90,6 +96,7 @@ namespace RFNB_UWP
                 Directory.CreateDirectory(sectionDirectory);
             }
             _pageData = new DictionaryWithExpiration<int, StrokeCollection>(16,StrokeFileLoader);
+            _root = notebookDirectory;
         }
 
     }

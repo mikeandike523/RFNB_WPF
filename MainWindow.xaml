@@ -5,14 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RFNB_UWP"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" WindowState="Maximized" WindowStyle="None" Height="Auto" VerticalAlignment="Stretch">
+    <!-- WindowState, WindoStyle courtesy of https://stackoverflow.com/a/34841329/5166365 -->
+    <!-- Height=Auto,VerticalAlignment =Stretch Courtesy of various users on https://www.codeproject.com/Questions/369359/Maximize-the-WPF-window -->
+    
     <Grid>
-        
+
         <InkCanvas 
-            x:Name="MainCanvas" 
+            x:Name="MainInkCanvas" 
             TouchDown="MainCanvas_TouchDown" 
             TouchMove="MainCanvas_TouchMove" 
-            TouchUp="MainCanvas_TouchUp"/>
-        
+            TouchUp="MainCanvas_TouchUp"
+            StrokeCollected="MainInkCanvas_StrokeCollected"
+            StrokeErased="MainInkCanvas_StrokeErased"
+            />
+
+        <TextBlock x:Name="PageNumber" FontSize="32" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
     </Grid>
 </Window>

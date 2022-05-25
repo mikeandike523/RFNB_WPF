@@ -47,7 +47,7 @@ namespace RFNB_UWP
         }
 
         public static System.Windows.Ink.StrokeCollection LoadStrokeCollectionFromFile(string relativePath) {
-            FileStream fs = new FileStream(GetFilePath(relativePath),FileMode.Open);
+            FileStream fs = new FileStream(GetFilePath(relativePath),FileMode.Create);
             System.Windows.Ink.StrokeCollection collection = new System.Windows.Ink.StrokeCollection(fs);
             fs.Close();
             return collection;
@@ -55,7 +55,7 @@ namespace RFNB_UWP
 
         public static System.Windows.Ink.StrokeCollection SaveStrokeCollectionToFile(string relativePath, StrokeCollection collection)
         {
-            FileStream fs = new FileStream(GetFilePath(relativePath), FileMode.Open);
+            FileStream fs = new FileStream(GetFilePath(relativePath), FileMode.Create);
             collection.Save(fs);
             fs.Close();
             return collection;
