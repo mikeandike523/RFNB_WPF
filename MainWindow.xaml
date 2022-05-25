@@ -11,6 +11,7 @@
     
     <Grid>
 
+        <!-- PreviewTouch Events Courtesy of https://social.msdn.microsoft.com/Forums/en-US/0c1a85e3-33c8-4e72-8661-deaa6c9e31ec/how-can-i-diable-touch-amp-mouse-ink-in-inkcanvas?forum=wpf -->
         <InkCanvas 
             x:Name="MainInkCanvas" 
             TouchDown="MainCanvas_TouchDown" 
@@ -18,9 +19,15 @@
             TouchUp="MainCanvas_TouchUp"
             StrokeCollected="MainInkCanvas_StrokeCollected"
             StrokeErased="MainInkCanvas_StrokeErased"
+            EditingMode="Ink"
+            Panel.ZIndex="1"
             />
 
-        <TextBlock x:Name="PageNumber" FontSize="32" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock x:Name="PageNumber" FontSize="32" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="2"/>
+
+        <Grid x:Name="TouchGrid" Width="Auto" Height="Auto" Panel.ZIndex="3" Background="Blue">
+            
+        </Grid>
 
     </Grid>
 </Window>
