@@ -35,68 +35,67 @@ namespace RFNB_UWP
         Notebook notebook = new Notebook("Untitled");
 
 
-        //UI -- Window and Rendering
+        //UI -- Window and Rendering + Fix for InkCanvas Inking On Touch
+
+        //Input Filtering Algorithm Courtesy of https://stackoverflow.com/a/19786712/5166365
+
+        bool _touchGridInputIsFromTouch = false;
 
         public MainWindow()
         {
 
             InitializeComponent();
 
-            /*
+
             // --- Courtesy of Microsoft Documentation
             // https://docs.microsoft.com/en-us/dotnet/api/system.windows.controls.inkcanvaseditingmode?view=windowsdesktop-6.0#system-windows-controls-inkcanvaseditingmode-ink
             MainInkCanvas.EditingMode = InkCanvasEditingMode.Ink;
             // ---
-            */
 
-            MainInkCanvas.EditingMode = InkCanvasEditingMode.Ink;
 
-            MainInkCanvas.MouseDown += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.MouseMove += (object sender, MouseEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.MouseUp += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.MouseLeftButtonDown += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.MouseRightButtonDown += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.MouseLeftButtonUp += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.MouseRightButtonUp += (object sender,MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.PreviewMouseLeftButtonDown += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.PreviewMouseLeftButtonUp += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.PreviewMouseRightButtonDown += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.PreviewMouseRightButtonUp += (object sender, MouseButtonEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.GotMouseCapture += (object sender, MouseEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.GotTouchCapture += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            MainInkCanvas.GotStylusCapture += (object sender, StylusEventArgs e) => { e.Handled = true; };
-
-            TouchGrid.TouchLeave += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            TouchGrid.MouseDown += (object? sender, MouseButtonEventArgs e) => {
-
-                System.Diagnostics.Debug.WriteLine("Grid Mouse Down");
-                e.Handled = true;
+            TouchGrid.PreviewStylusDown += (object? sender, StylusDownEventArgs e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("Preview Stylus Down");
+                _touchGridInputIsFromTouch=true;
             };
-            TouchGrid.StylusEnter += (object? sender, StylusEventArgs e) => {
-                System.Diagnostics.Debug.WriteLine("Grid Stylus Enter");
-                e.Handled = true; };
-          //  TouchGrid.StylusDown += (object sender, StylusDownEventArgs e) => {
-            //    System.Diagnostics.Debug.WriteLine("Grid Stylus Down");
-            //    MainInkCanvas.RaiseEvent(e);
-          //      e.Handled = true; 
-          //  };
-            TouchGrid.StylusMove += (object sender, StylusEventArgs e) => {
-             //   MainInkCanvas.RaiseEvent(e);
-                e.Handled = true;
+
+
+            TouchGrid.PreviewStylusUp += (object? sender, StylusEventArgs e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("Preview Stylus Up");
             };
-            TouchGrid.StylusUp += (object sender, StylusEventArgs e) => {
-              //  MainInkCanvas.RaiseEvent(e);
-                e.Handled = true;
+
+            TouchGrid.StylusDown += (object? sender, StylusDownEventArgs e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("Stylus Down");
+                if (!_touchGridInputIsFromTouch) {
+                    MainInkCanvas.RaiseEvent(e);
+                }
             };
-            TouchGrid.TouchDown += (object? sender, TouchEventArgs e) => {
-                System.Diagnostics.Debug.WriteLine("Grid Touch Down");
-                e.Handled = true; };
-            TouchGrid.TouchUp += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            TouchGrid.TouchMove += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            TouchGrid.PreviewTouchDown += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            TouchGrid.PreviewTouchUp += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            TouchGrid.PreviewTouchMove += (object? sender, TouchEventArgs e) => { e.Handled = true; };
-            TouchGrid.TouchEnter += (object? sender, TouchEventArgs e) => { e.Handled = true; };
+
+            TouchGrid.StylusMove += (object? sender, StylusEventArgs e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("Stylus Move");
+                if (!_touchGridInputIsFromTouch) {
+                    MainInkCanvas.RaiseEvent(e);
+                }
+            };
+
+            TouchGrid.StylusUp += (object? sender, StylusEventArgs e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("Stylus Up");
+                if (!_touchGridInputIsFromTouch) {
+                    MainInkCanvas.RaiseEvent(e);
+                }
+
+                _touchGridInputIsFromTouch = false;
+            };
+
+            TouchGrid.MouseMove += (object? sender, MouseEventArgs e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("Mouse Move");
+            };
+
 
 
             Render();
@@ -126,7 +125,6 @@ namespace RFNB_UWP
         //e.Handled = True courtesy of https://social.msdn.microsoft.com/Forums/en-US/0c1a85e3-33c8-4e72-8661-deaa6c9e31ec/how-can-i-diable-touch-amp-mouse-ink-in-inkcanvas?forum=wpf
         private void MainCanvas_TouchDown(object sender, TouchEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("Canvas Touch Down");
             initialX = e.GetTouchPoint(null).Position.X;
             initialY = e.GetTouchPoint(null).Position.Y;
             e.Handled = true;

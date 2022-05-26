@@ -25,7 +25,7 @@
 
         <TextBlock x:Name="PageNumber" FontSize="32" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="2"/>
 
-        <Grid x:Name="TouchGrid" Width="Auto" Height="Auto" Panel.ZIndex="3" Background="Blue">
+        <Grid x:Name="TouchGrid" Width="Auto" Height="Auto" Panel.ZIndex="3" Background="Transparent">
             
         </Grid>
 
